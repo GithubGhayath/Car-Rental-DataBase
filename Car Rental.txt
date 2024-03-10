@@ -1,0 +1,99 @@
+use CarRental;
+
+create table Clients
+(
+	ClientID int primary key identity(1,1),
+	FirstName nvarchar(100) not null,
+	MidName nvarchar(100) not null,
+	LastName nvarchar(100) not null,
+	DriverLicenseNumber bigint not null
+)
+
+create table Phones
+(
+	PhoneID int primary key identity(1,1),
+	Phone nvarchar(50) not null,
+	ClientID int not null,
+	Constraint FK_ClientIDPhoneNumber foreign key(ClientID) references Clients(ClientID)
+)
+
+create table Makes
+(
+	MakeID int Primary key identity(1,1),
+	MakeName nvarchar(max) not null
+)
+
+create table Models
+(
+	ModelID int primary key identity(1,1),
+	ModelName nvarchar(max) not null
+)
+
+create table VehicleFualType
+(
+	FualID int primary key identity(1,1),
+	FualName nvarchar(500) not null
+)
+
+create table VehicleCatigory
+(
+	CatigoryID int primary key identity(1,1),
+	CatigoryName nvarchar(max) not null
+)
+
+create table VehicleInformations
+(
+	VehicleID int primary key identity(1,1),
+	Make int not null,
+	Model int not null,
+	Catigory int not null,
+	PlateNumber nvarchar(30) not null,
+	Year date null,
+	Milage nvarchar(50) not null,
+	RentalRetes money not null,
+	Fual int not null,
+	constraint FK_MakeID foreign key(Make) references Makes(MakeID),
+	constraint FK_ModelID foreign key(Model) references Models(ModelID),
+	constraint FK_CatigoryID foreign key(Catigory) references VehicleCatigory(CatigoryID),
+	constraint FK_FualID foreign key(Fual) references VehicleFualType(FualID)
+)
+
+create table RentalTransaction
+(
+	TransactionID int primary key identity(1,1),
+	InitailPaidAmount money not null,
+	PaymentDetails money not null,
+	AdditionalCharges money null,
+	FinalPaidAmount money not null,
+)
+
+create table ReturnVehicle
+(
+	ReturnID int primary key identity(1,1),
+	ActualReturnDate date not null,
+	ActualDaysRentNumber int not null,
+	FinalVehicleCheckNotes nvarchar(max) not null,
+	MilageAfterRent nvarchar(60) not null,
+	ConsumedMilage nvarchar(60) not null
+)
+
+create table VehicleBookings
+(
+	BookingID int primary key identity(1,1),
+	Client int not null,
+	Vehicle int not null,
+	RentalStartDate date not null,
+	RentalEndDate date not null,
+	PickupLocation nvarchar(max) not null,
+	DropOfLocation nvarchar(max) not null,
+	CurrentMilage nvarchar(50) not null,
+	InitailVehicleCheckNote nvarchar(max) not null,
+	InitailTotalDueAmount money not null,
+	InitailNumberOfDaysRent int not null,
+	Return_Veh int  null,
+	P_Transaction int not null,
+	constraint FK_ClientID foreign key(Client) references Clients(ClientID),
+	constraint FK_VehicleInformations foreign key(Vehicle) references VehicleInformations(VehicleID),
+	constraint FK_Return_Veh foreign key(Return_Veh) references ReturnVehicle(ReturnID),
+	constraint FK_P_Transaction foreign key(P_Transaction) references RentalTransaction(TransactionID)
+)
